@@ -1,0 +1,12 @@
+{
+  "addons": {
+    "seo-viewer@klaus220": {
+      "updates": [
+        {
+          "version": "1.1.2",
+          "update_link": "https://github.com/Klaus220/seo-extension/raw/release/artifacts/seo-viewer-1.1.2-firefox.xpi"
+        }
+      ]
+    }
+  }
+}

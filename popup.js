@@ -74,11 +74,51 @@ function linkValue(row) {
   return parts.join(' · ') || row.raw || '';
 }
 
-const ICONS = {
-  copy: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
-  json: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1"/><path d="M16 3h1a2 2 0 0 1 2 2v5a2 2 0 0 0 2 2 2 2 0 0 0-2 2v5a2 2 0 0 1-2 2h-1"/></svg>',
-  structure: '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
-};
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+function svgNode(tag, attrs, children = []) {
+  const el = document.createElementNS(SVG_NS, tag);
+  for (const [key, value] of Object.entries(attrs)) {
+    el.setAttribute(key, value);
+  }
+  for (const child of children) el.append(child);
+  return el;
+}
+
+function makeIcon(name) {
+  const root = {
+    width: '14',
+    height: '14',
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': '2',
+    'stroke-linecap': 'round',
+    'stroke-linejoin': 'round',
+    'aria-hidden': 'true',
+  };
+  if (name === 'copy') {
+    return svgNode('svg', root, [
+      svgNode('rect', { x: '9', y: '9', width: '13', height: '13', rx: '2' }),
+      svgNode('path', {
+        d: 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1',
+      }),
+    ]);
+  }
+  if (name === 'json') {
+    return svgNode('svg', root, [
+      svgNode('path', {
+        d: 'M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5c0 1.1.9 2 2 2h1',
+      }),
+      svgNode('path', {
+        d: 'M16 3h1a2 2 0 0 1 2 2v5a2 2 0 0 0 2 2 2 2 0 0 0-2 2v5a2 2 0 0 1-2 2h-1',
+      }),
+    ]);
+  }
+  return svgNode('svg', root, [
+    svgNode('path', { d: 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01' }),
+  ]);
+}
 
 function iconButton(icon, title, className, onClick) {
   const btn = document.createElement('button');
@@ -86,7 +126,7 @@ function iconButton(icon, title, className, onClick) {
   btn.className = `btn btn-icon${className ? ` ${className}` : ''}`;
   btn.title = title;
   btn.setAttribute('aria-label', title);
-  btn.innerHTML = ICONS[icon];
+  btn.append(makeIcon(icon));
   btn.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -96,7 +136,7 @@ function iconButton(icon, title, className, onClick) {
 }
 
 function setIconButton(btn, icon, title) {
-  btn.innerHTML = ICONS[icon];
+  btn.replaceChildren(makeIcon(icon));
   btn.title = title;
   btn.setAttribute('aria-label', title);
 }

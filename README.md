@@ -2,64 +2,66 @@
 
 Расширение для Firefox, Chrome и Яндекс.Браузера: во всплывающем окне показывает SEO-разметку страницы — meta, link, Open Graph, Twitter, itemprop и JSON-LD. Есть фильтр, копирование и переключение JSON-LD между структурой и JSON.
 
+Актуальный релиз всегда в ветке **`release`**. В этой ветке коммиты только релизы (`Release x.y.z`).
+
+## Firefox: автообновление
+
+В `manifest.json` для Gecko заданы:
+
+- `id`: `seo-viewer@klaus220`
+- `update_url`: `https://raw.githubusercontent.com/Klaus220/seo-extension/release/updates.json`
+
+Каталог обновлений: [`updates.json`](./updates.json) → XPI в [`artifacts/`](./artifacts/).
+
+> Автообновление в обычном Firefox Release работает только для **подписанного** Mozilla XPI. Неподписанный пакет ставится временно / в Developer Edition; для продакшена нужна [подпись AMO](https://extensionworkshop.com/documentation/publish/signing-and-distribution-overview/).
+
 ## Сборка пакетов
 
 ```bash
 python3 scripts/build.py
 ```
 
-Появятся файлы в `dist/`:
-
-| Файл | Для кого |
-|------|----------|
-| `seo-viewer-*-firefox.xpi` | Firefox |
-| `seo-viewer-*-chromium.zip` | Chrome, Яндекс.Браузер, другие Chromium |
-| `dist/firefox/`, `dist/chromium/` | Распакованные копии (удобно для «Load unpacked») |
+| Файл | Назначение |
+|------|------------|
+| `dist/seo-viewer-*-firefox.xpi` | Firefox (сборка) |
+| `artifacts/seo-viewer-*-firefox.xpi` | Firefox (публикуется в git на `release` для `update_link`) |
+| `dist/seo-viewer-*-chromium.zip` | Chrome / Яндекс.Браузер |
+| `updates.json` | манифест обновлений Firefox (перезаписывается сборкой) |
 
 ## Установка
 
-### Chrome / Яндекс.Браузер (постоянно в профиле)
+### Chrome / Яндекс.Браузер
 
-1. Распакуй `seo-viewer-*-chromium.zip` **или** используй папку `dist/chromium`
-2. Открой `chrome://extensions` (в Яндексе: `browser://extensions`)
-3. Включи **Режим разработчика**
-4. **Загрузить распакованное расширение** → укажи папку с `manifest.json`
-
-Расширение останется после перезапуска браузера (пока не удалишь). Обновление кода: кнопка «Обновить» на карточке расширения.
+1. Распакуй `seo-viewer-*-chromium.zip` или возьми `dist/chromium`
+2. `chrome://extensions` / `browser://extensions` → режим разработчика
+3. **Загрузить распакованное расширение**
 
 ### Firefox
 
-**Вариант A — из папки (удобно для разработки):**
+Скачай XPI с ветки `release`:  
+`artifacts/seo-viewer-*-firefox.xpi`
 
-1. `about:debugging#/runtime/this-firefox`
-2. **Load Temporary Add-on…** → `dist/firefox/manifest.json`  
-   Снимается после перезапуска Firefox.
+- Release: лучше подписанный XPI (AMO) или Developer Edition / temporary load
+- Разработка: `about:debugging` → Load Temporary Add-on → `manifest.json`
 
-**Вариант B — файл `.xpi`:**
+## Релиз (ветка `release`)
 
-1. `about:addons` → шестерёнка → **Install Add-on From File…** → выбери `.xpi`  
-   На обычном Firefox Release неподписанный `.xpi` может быть отклонён. Тогда используй вариант A, либо Firefox Developer Edition / Nightly, либо подпись через [AMO / web-ext sign](https://extensionworkshop.com/documentation/publish/signing-and-distribution-overview/).
+1. Поднять `version` в `manifest.json`
+2. `python3 scripts/build.py`
+3. Один коммит: `Release x.y.z`
+4. `git push origin release`
 
 ## Как пользоваться
 
 1. Открой обычную страницу (`https://…`)
-2. Нажми иконку **SEO Viewer**
-3. Фильтр сверху; иконки — копирование и JSON/структура для JSON-LD
+2. Иконка **SEO Viewer**
+3. Фильтр; иконки — копирование и JSON / структура
 
-Служебные страницы (`about:…`, `chrome://…`) не читаются.
-
-## Демо-страница
+## Демо / самопроверка
 
 ```bash
 cd fixtures && python3 -m http.server 8765
-```
+# http://127.0.0.1:8765/sample.html
 
-Открой http://127.0.0.1:8765/sample.html
-
-## Самопроверка
-
-```bash
 node tests/extract-selfcheck.mjs
 ```
-
-Ожидается: `ok`

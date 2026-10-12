@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build installable packages for Firefox (.xpi) and Chromium/Yandex (.zip)."""
+"""Build installable packages and refresh Firefox updates.json (release branch)."""
 
 from __future__ import annotations
 
@@ -10,6 +10,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
+ARTIFACTS = ROOT / "artifacts"
+
+REPO = "Klaus220/seo-extension"
+RELEASE_BRANCH = "release"
+GECKO_ID = "seo-viewer@klaus220"
 
 INCLUDE = [
     "manifest.json",
@@ -49,24 +54,53 @@ def zip_dir(source: Path, archive: Path) -> None:
                 zf.write(path, path.relative_to(source).as_posix())
 
 
+def write_updates_json(ver: str, xpi_name: str) -> None:
+    update_link = (
+        f"https://github.com/{REPO}/raw/{RELEASE_BRANCH}/artifacts/{xpi_name}"
+    )
+    payload = {
+        "addons": {
+            GECKO_ID: {
+                "updates": [
+                    {
+                        "version": ver,
+                        "update_link": update_link,
+                    }
+                ]
+            }
+        }
+    }
+    (ROOT / "updates.json").write_text(
+        json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+
+
 def main() -> None:
     ver = version()
     DIST.mkdir(parents=True, exist_ok=True)
+    ARTIFACTS.mkdir(parents=True, exist_ok=True)
 
     firefox_dir = DIST / "firefox"
     chromium_dir = DIST / "chromium"
     stage(firefox_dir)
     stage(chromium_dir)
 
-    xpi = DIST / f"seo-viewer-{ver}-firefox.xpi"
+    xpi_name = f"seo-viewer-{ver}-firefox.xpi"
+    xpi = DIST / xpi_name
     chromium_zip = DIST / f"seo-viewer-{ver}-chromium.zip"
 
     zip_dir(firefox_dir, xpi)
-    # .xpi is a zip; keep identical bytes also useful as .zip alias for tools
     zip_dir(chromium_dir, chromium_zip)
 
+    artifact_xpi = ARTIFACTS / xpi_name
+    shutil.copy2(xpi, artifact_xpi)
+    write_updates_json(ver, xpi_name)
+
     print(f"Firefox:  {xpi}")
+    print(f"Artifact: {artifact_xpi}")
     print(f"Chromium: {chromium_zip}")
+    print(f"Updates:  {ROOT / 'updates.json'}")
     print(f"Unpacked: {firefox_dir}/  and  {chromium_dir}/")
 
 
