@@ -2,3 +2,4 @@ dist/
 *.xpi
 *.crx
 .DS_Store
+docs/superpowers/
