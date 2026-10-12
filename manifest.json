@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "SEO Viewer",
+  "version": "1.0.0",
+  "description": "Просмотр meta, Open Graph, Twitter и JSON-LD текущей страницы.",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "SEO Viewer",
+    "default_icon": {
+      "48": "icons/icon-48.png",
+      "96": "icons/icon-96.png"
+    }
+  },
+  "icons": {
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "seo-viewer@local",
+      "strict_min_version": "109.0"
+    }
+  }
+}
