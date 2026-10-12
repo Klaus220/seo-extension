@@ -9,10 +9,21 @@
   <body>
     <header class="header">
       <h1>SEO Viewer</h1>
+      <input
+        id="filter"
+        class="filter"
+        type="search"
+        placeholder="Фильтр…"
+        autocomplete="off"
+        spellcheck="false"
+        hidden
+      />
     </header>
     <p id="status" class="status" role="status">Загрузка…</p>
     <main id="app" class="app" hidden></main>
     <div id="toast" class="toast" hidden>Скопировано</div>
+    <script src="api.js"></script>
+    <script src="helpers.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

@@ -1,0 +1,4 @@
+dist/
+*.xpi
+*.crx
+.DS_Store

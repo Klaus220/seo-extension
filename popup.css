@@ -15,35 +15,54 @@
   box-sizing: border-box;
 }
 
-html,
+/* Firefox action popup hard cap: 800×600 (MDN). Width on body, not :root. */
+html {
+  margin: 0;
+  padding: 0;
+}
+
 body {
   margin: 0;
   padding: 0;
-  width: 400px;
-  max-height: 560px;
+  width: 800px;
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background: linear-gradient(165deg, #eef3ef 0%, var(--bg) 45%, #ebe6dc 100%);
   color: var(--ink);
   font: 13px/1.45 var(--sans);
 }
 
-body {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
 .header {
-  padding: 10px 12px 6px;
+  padding: 10px 12px 8px;
   border-bottom: 1px solid var(--line);
   background: rgba(255, 253, 248, 0.85);
 }
 
 .header h1 {
-  margin: 0;
+  margin: 0 0 6px;
   font-size: 15px;
   font-weight: 650;
   letter-spacing: 0.02em;
   color: var(--accent);
+}
+
+.filter {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--ink);
+  font: 13px/1.3 var(--sans);
+}
+
+.filter:focus {
+  outline: 2px solid var(--accent-soft);
+  border-color: var(--accent);
 }
 
 .status {
@@ -104,7 +123,7 @@ body {
 
 .row {
   display: grid;
-  grid-template-columns: minmax(90px, 34%) 1fr auto;
+  grid-template-columns: 120px minmax(0, 1fr) auto;
   gap: 6px;
   align-items: start;
   padding: 5px 0;
@@ -117,14 +136,15 @@ body {
 
 .row-label {
   color: var(--muted);
-  word-break: break-word;
+  overflow-wrap: anywhere;
   font-size: 12px;
 }
 
 .row-value {
   margin: 0;
+  min-width: 0;
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: anywhere;
   font-family: var(--mono);
   font-size: 11px;
   line-height: 1.4;
@@ -145,6 +165,20 @@ body {
   white-space: nowrap;
 }
 
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+}
+
+.btn-icon svg {
+  display: block;
+}
+
 .btn:hover {
   background: #d5e8e0;
 }
@@ -157,25 +191,69 @@ body {
   flex-shrink: 0;
 }
 
-.block {
-  margin-top: 6px;
-  padding-top: 6px;
-  border-top: 1px dashed var(--line);
+.jsonld-block,
+.jsonld-node {
+  margin-top: 4px;
+  border: 1px solid #eee8dc;
+  border-radius: 4px;
+  background: #fffcf6;
 }
 
-.block:first-child {
+.jsonld-block:first-child,
+.jsonld-node-body > .jsonld-node:first-child {
   margin-top: 0;
-  padding-top: 0;
-  border-top: 0;
 }
 
-.block-head {
+.jsonld-node {
+  background: #faf8f2;
+}
+
+.jsonld-node .jsonld-node {
+  background: #f7f4ec;
+}
+
+.jsonld-summary {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  gap: 6px;
+  padding: 5px 8px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.jsonld-summary::-webkit-details-marker {
+  display: none;
+}
+
+.jsonld-title {
+  flex: 1;
+  min-width: 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.jsonld-title::before {
+  content: '▸ ';
+  color: var(--accent);
+}
+
+.jsonld-block[open] > .jsonld-summary > .jsonld-title::before,
+.jsonld-node[open] > .jsonld-summary > .jsonld-title::before {
+  content: '▾ ';
+}
+
+.jsonld-body,
+.jsonld-node-body {
+  margin: 0;
+  padding: 0 8px 8px;
+  border-top: 1px dashed var(--line);
+  padding-top: 6px;
+}
+
+.jsonld-view-json {
+  margin: 0;
 }
 
 .toast {

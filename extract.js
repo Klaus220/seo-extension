@@ -12,6 +12,7 @@
         property: attr(el, 'property'),
         httpEquiv: attr(el, 'http-equiv'),
         charset: attr(el, 'charset'),
+        itemprop: attr(el, 'itemprop'),
         content: attr(el, 'content'),
         raw: el.outerHTML,
       };
